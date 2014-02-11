@@ -5,6 +5,10 @@ import android.util.JsonWriter;
 import com.wanda.data.MetaData;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+
 /**
  * Created by sash on 10/02/14.
  */
@@ -14,6 +18,26 @@ import java.io.IOException;
  */
 
 public class WandaJsonWriter {
+
+    private JsonWriter writer;
+
+    /**
+     * Constructor, opening the JsonWriter on an given out stream
+     * @param out
+     * @throws UnsupportedEncodingException
+     */
+    public WandaJsonWriter(OutputStream out) throws UnsupportedEncodingException {
+        JsonWriter writer = new JsonWriter(new OutputStreamWriter(out, "UTF-8"));
+        writer.setIndent("  ");
+    }
+
+    /**
+     * call to close the writer
+     * @throws IOException
+     */
+    public void closeWriter() throws IOException {
+        writer.close();
+    }
 
     /**
      * method to write the metaData object into json-format
