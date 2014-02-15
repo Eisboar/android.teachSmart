@@ -8,16 +8,19 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.conn.ssl.X509HostnameVerifier;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
+import org.apache.http.protocol.HTTP;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -64,6 +67,7 @@ public class HttpsClient {
             HttpParams params = new BasicHttpParams();
             HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
             HttpProtocolParams.setContentCharset(params, "utf-8");
+
             params.setBooleanParameter("http.protocol.expect-continue", false);
 
             SchemeRegistry registry = new SchemeRegistry();
@@ -119,6 +123,46 @@ public class HttpsClient {
             HttpClient client = getHttpClient();
             HttpGet request = new HttpGet();
             request.setURI(new URI(url));
+            HttpResponse response = client.execute(request);
+            in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+
+            StringBuffer sb = new StringBuffer("");
+            String line = "";
+            String NL = System.getProperty("line.separator");
+            while ((line = in.readLine()) != null) {
+                sb.append(line + NL);
+            }
+            in.close();
+
+            String result = sb.toString();
+            return result;
+        }
+        finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * Method to make an https POST request, based on the predefined connection
+     * @param url
+     * @return
+     * @throws Exception
+     */
+    public static String executeHttpPost(String url, String jsonData) throws Exception {
+        BufferedReader in = null;
+        try {
+            HttpClient client = getHttpClient();
+            HttpPost request = new HttpPost();
+            request.setURI(new URI(url));
+            StringEntity entity = new StringEntity(jsonData, HTTP.UTF_8);
+            entity.setContentType("application/json");
+            request.setEntity(entity);
             HttpResponse response = client.execute(request);
             in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 
