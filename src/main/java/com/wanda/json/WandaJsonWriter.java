@@ -7,6 +7,7 @@ import com.wanda.data.MetaData;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -26,8 +27,8 @@ public class WandaJsonWriter {
      * @param out
      * @throws UnsupportedEncodingException
      */
-    public WandaJsonWriter(OutputStream out) throws UnsupportedEncodingException {
-        JsonWriter writer = new JsonWriter(new OutputStreamWriter(out, "UTF-8"));
+    public WandaJsonWriter(StringWriter out) throws UnsupportedEncodingException {
+        writer = new JsonWriter(out);
         writer.setIndent("  ");
     }
 
@@ -41,12 +42,11 @@ public class WandaJsonWriter {
 
     /**
      * method to write the metaData object into json-format
-     * @param writer
      * @param metaData
      * @param password
      * @throws IOException
      */
-        public void writeMeta(JsonWriter writer, MetaData metaData, String password) throws IOException {
+        public void writeMeta(MetaData metaData, String password) throws IOException {
 
             //begin metaData object
             writer.beginObject();
@@ -65,12 +65,11 @@ public class WandaJsonWriter {
 
     /**
      * method to write the metadata object without password
-     * @param writer
      * @param metaData
      * @throws IOException
      */
-        public void writeMeta(JsonWriter writer, MetaData metaData) throws IOException {
-            writeMeta(writer, metaData, null);
+        public void writeMeta(MetaData metaData) throws IOException {
+            writeMeta(metaData, null);
         }
 
 }
