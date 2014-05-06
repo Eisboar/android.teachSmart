@@ -3,6 +3,14 @@ package com.wanda.network;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import com.wanda.data.MetaData;
+import com.wanda.json.WandaJsonWriter;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.StringWriter;
+
 /**
  * Created by sash on 04/02/14.
  */
@@ -20,9 +28,18 @@ public class HttpsRequest extends AsyncTask<String, String, String > {
     @Override
     protected String doInBackground(String... params) {
         // TODO: attempt authentication against a network service.
-        String s = null;            try {
+        String s = null;
+        try {
             HttpsClient myHttpClient = new HttpsClient(context);
-            s = myHttpClient.executeHttpGet("https://192.168.0.63:8443/wanda.backend/myresources");
+
+            StringWriter jsonStringStream = new StringWriter();
+            WandaJsonWriter wandaJsonWriter = new WandaJsonWriter(jsonStringStream);
+            MetaData metaData = new MetaData("testuser");
+            wandaJsonWriter.writeMeta(metaData);
+            jsonStringStream.flush();
+            s = myHttpClient.executeHttpPost("https://10.0.2.2:8443/wanda.backend/login", jsonStringStream.toString());
+            //s = myHttpClient.executeHttpPost("https://192.168.0.63:8443/wanda.backend/login", metaData.getUsername());
+            //s = myHttpClient.executeHttpPost("https://192.168.0.63:8443/wanda.backend/login", "lala");
 
 
 
