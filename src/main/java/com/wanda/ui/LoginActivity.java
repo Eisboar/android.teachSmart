@@ -158,7 +158,7 @@ public class LoginActivity extends Activity implements CallbackListenerInterface
             mLoginStatusMessageView.setText(R.string.login_progress_signing_in);
             showProgress(true);
             mAuthTask = new HttpsRequest(this);
-            mAuthTask.execute(null);
+            mAuthTask.execute("");
         }
     }
 
