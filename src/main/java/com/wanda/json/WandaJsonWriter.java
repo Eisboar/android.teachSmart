@@ -48,18 +48,13 @@ public class WandaJsonWriter {
      */
         public void writeMeta(MetaData metaData, String password) throws IOException {
 
-            //begin metaData object
             writer.beginObject();
-            writer.name("meta");
 
-            //fill metaData object
-            writer.beginObject();
+            //fill login-json-object
             writer.name("username").value(metaData.getUsername());
             writer.name("password").value(password);
-            writer.name("sessionID").value(metaData.getSessionID());
-            writer.endObject();
 
-            //close metadata object
+            //close up
             writer.endObject();
         }
 

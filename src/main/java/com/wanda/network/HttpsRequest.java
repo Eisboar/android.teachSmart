@@ -37,6 +37,7 @@ public class HttpsRequest extends AsyncTask<String, String, String > {
             MetaData metaData = new MetaData("testuser");
             wandaJsonWriter.writeMeta(metaData);
             jsonStringStream.flush();
+
             s = myHttpClient.executeHttpPost("https://10.0.2.2:8443/wanda.backend/login", jsonStringStream.toString());
             //s = myHttpClient.executeHttpPost("https://192.168.0.63:8443/wanda.backend/login", metaData.getUsername());
             //s = myHttpClient.executeHttpPost("https://192.168.0.63:8443/wanda.backend/login", "lala");
