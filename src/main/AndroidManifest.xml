@@ -21,6 +21,10 @@
             android:label="@string/title_activity_login"
             android:windowSoftInputMode="adjustResize|stateVisible" >
         </activity>
+        <activity
+            android:name=".ui.QuestionSheetView"
+            android:label="@string/title_activity_question_sheet" >
+        </activity>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />
