@@ -7,6 +7,7 @@ import com.wanda.data.MetaData;
 import com.wanda.json.WandaJsonWriter;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
@@ -34,8 +35,8 @@ public class HttpsRequest extends AsyncTask<String, String, String > {
 
             StringWriter jsonStringStream = new StringWriter();
             WandaJsonWriter wandaJsonWriter = new WandaJsonWriter(jsonStringStream);
-            MetaData metaData = new MetaData("testuser");
-            wandaJsonWriter.writeMeta(metaData);
+            MetaData metaData = new MetaData(params[0]);
+            wandaJsonWriter.writeMeta(metaData,params[1]);
             jsonStringStream.flush();
 
             s = myHttpClient.executeHttpPost("https://10.0.2.2:8443/wanda.backend/login", jsonStringStream.toString());

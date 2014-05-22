@@ -158,7 +158,7 @@ public class LoginActivity extends Activity implements CallbackListenerInterface
             mLoginStatusMessageView.setText(R.string.login_progress_signing_in);
             showProgress(true);
             mAuthTask = new HttpsRequest(this);
-            mAuthTask.execute("");
+            mAuthTask.execute(usernameField.getText().toString(),passwordField.getText().toString());
         }
     }
 
@@ -169,12 +169,28 @@ public class LoginActivity extends Activity implements CallbackListenerInterface
      */
     @Override
     public void onTaskComplete(String result) {
+        //showProgress(false);
         Context context = getApplicationContext();
         CharSequence text = result;
         int duration = Toast.LENGTH_SHORT;
 
         Toast toast = Toast.makeText(context, text, duration);
         toast.show();
+
+        mAuthTask = null;
+        showProgress(false);
+
+//        if (success)
+//        {
+//            //finish();
+//           // Intent myIntent = new Intent(LoginActivity.this,CalculatorActivity.class);
+//            LoginActivity.this.startActivity(myIntent);
+//        } else
+//        {
+//            mPasswordView
+//                    .setError(getString(R.string.error_incorrect_password));
+//            mPasswordView.requestFocus();
+//        }
     }
 
 

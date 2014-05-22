@@ -63,8 +63,8 @@ public class WandaJsonWriter {
      * @param metaData
      * @throws IOException
      */
-        public void writeMeta(MetaData metaData) throws IOException {
-            writeMeta(metaData, null);
-        }
+        //public void writeMeta(MetaData metaData) throws IOException {
+//            writeMeta(metaData, null);
+//        }
 
 }
