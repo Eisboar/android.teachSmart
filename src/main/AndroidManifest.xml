@@ -22,8 +22,12 @@
             android:windowSoftInputMode="adjustResize|stateVisible" >
         </activity>
         <activity
-            android:name=".ui.QuestionSheetView"
+            android:name="com.wanda.ui.QuestionSheetView"
             android:label="@string/title_activity_question_sheet" >
+        </activity>
+        <activity
+            android:name=".ui.SheetsView"
+            android:label="@string/title_activity_question_sheets_view" >
         </activity>
     </application>
 
