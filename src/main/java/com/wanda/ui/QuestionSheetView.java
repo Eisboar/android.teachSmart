@@ -1,6 +1,7 @@
 package com.wanda.ui;
 
 import java.util.Locale;
+import java.util.Vector;
 
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
@@ -37,20 +38,24 @@ public class QuestionSheetView extends ActionBarActivity {
      */
     ViewPager mViewPager;
 
-    private QuestionSheet createDummyData(){
-        Log.i("SASH", "creating Dummy-data");
-        QuestionSheet questionSheet = new QuestionSheet();
-        questionSheet.addQuestion(new Question(1,"erste frage"));
-        questionSheet.addQuestion(new Question(2,"zweite frage"));
-        return questionSheet;
-    }
+//    private QuestionSheet createDummyData(){
+//        Log.i("SASH", "creating Dummy-data");
+//        QuestionSheet questionSheet = new QuestionSheet();
+//        Vector<Question> questions = new Vector<Question>();
+//        questionSheet.setQuestions(questions);
+//        questionSheet.addQuestion(new Question(1,"erste frage"));
+//        questionSheet.addQuestion(new Question(2,"zweite frage"));
+//        return questionSheet;
+//    }
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        Bundle bundle = getIntent().getExtras();
+        QuestionSheet questionSheet = (QuestionSheet) bundle.getSerializable("questionSheet");
 
-        QuestionSheet questionSheet = createDummyData();
+        //QuestionSheet questionSheet = createDummyData();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_question_sheet);
@@ -108,7 +113,11 @@ public class QuestionSheetView extends ActionBarActivity {
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return new QuestionView(questionSheet.getQuestion(position));
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("question", questionSheet.getQuestion(position));
+            QuestionView questionView = new RatingQuestionView();
+            questionView.setArguments(bundle);
+            return questionView;
         }
 
         @Override
@@ -133,36 +142,6 @@ public class QuestionSheetView extends ActionBarActivity {
         }
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public class QuestionView extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private Question question;
 
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public QuestionView(Question question) {
-            //QuestionView fragment = new QuestionView();
-            this.question=question;
-        }
-
-        public QuestionView() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.question_view_layout, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(question.getQuestionText());
-            return rootView;
-        }
-    }
 
 }

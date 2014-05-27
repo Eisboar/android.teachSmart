@@ -31,12 +31,12 @@ import com.wanda.network.HttpsRequest;
  * view.
  * showing an animation when logging in (progress view api 12+)
  */
-public class LoginActivity extends Activity implements CallbackListenerInterface<String> {
+public class LoginActivity extends Activity implements CallbackListenerInterface<Object> {
 
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
-    private HttpsRequest mAuthTask = null;
+    private HttpsRequest httpsRequest = null;
 
     private MetaData metaData;
 
@@ -114,8 +114,8 @@ public class LoginActivity extends Activity implements CallbackListenerInterface
      * method when an login attempt is triggered by the button or the 'enter'-key
      *
      */
-    public void attemptLogin() {
-        if (mAuthTask != null) {
+    private void attemptLogin() {
+        if (httpsRequest != null) {
             return;
         }
 
@@ -157,8 +157,8 @@ public class LoginActivity extends Activity implements CallbackListenerInterface
             // perform the user login attempt.
             mLoginStatusMessageView.setText(R.string.login_progress_signing_in);
             showProgress(true);
-            mAuthTask = new HttpsRequest(this);
-            mAuthTask.execute(usernameField.getText().toString(),passwordField.getText().toString());
+            httpsRequest = new HttpsRequest(this);
+            httpsRequest.execute("login", usernameField.getText().toString(),passwordField.getText().toString());
         }
     }
 
@@ -168,16 +168,16 @@ public class LoginActivity extends Activity implements CallbackListenerInterface
      * Method that is triggered by background task completion
      */
     @Override
-    public void onTaskComplete(String result) {
+    public void onTaskComplete(Object result) {
         //showProgress(false);
         Context context = getApplicationContext();
-        CharSequence text = result;
+        CharSequence text = (String) result;
         int duration = Toast.LENGTH_SHORT;
 
         Toast toast = Toast.makeText(context, text, duration);
         toast.show();
 
-        mAuthTask = null;
+        httpsRequest = null;
         showProgress(false);
 
 //        if (success)

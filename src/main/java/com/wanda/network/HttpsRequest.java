@@ -2,87 +2,94 @@ package com.wanda.network;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.JsonReader;
+import android.util.Log;
 
 import com.wanda.data.MetaData;
+import com.wanda.data.QuestionSheet;
+import com.wanda.json.WandaJsonReader;
 import com.wanda.json.WandaJsonWriter;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.StringWriter;
 
 /**
  * Created by sash on 04/02/14.
  */
-public class HttpsRequest extends AsyncTask<String, String, String > {
+public class HttpsRequest extends AsyncTask<Object, String, Object > {
 
-    private CallbackListenerInterface<String> callback;
+    private String serverAddress = "https://10.0.2.2:8443/wanda.backend/";
+
+    private CallbackListenerInterface<Object> callback;
 
     private Context context;
 
-    public HttpsRequest (CallbackListenerInterface<String> callback) {
+    private String task = null;
+
+    private WandaJsonWriter wandaJsonWriter = null;
+
+
+    public HttpsRequest (CallbackListenerInterface<Object> callback) {
         this.context=(Context) callback;
         this.callback = callback;
     }
 
     @Override
-    protected String doInBackground(String... params) {
-        // TODO: attempt authentication against a network service.
+    protected String doInBackground(Object... params) {
+        task = (String) params[0];
         String s = null;
+
         try {
             HttpsClient myHttpClient = new HttpsClient(context);
 
+
             StringWriter jsonStringStream = new StringWriter();
-            WandaJsonWriter wandaJsonWriter = new WandaJsonWriter(jsonStringStream);
-            MetaData metaData = new MetaData(params[0]);
-            wandaJsonWriter.writeMeta(metaData,params[1]);
+            wandaJsonWriter = new WandaJsonWriter(jsonStringStream);
+
+            if (task.equals("login")) {
+                buildLoginRequest((String) params[1], (String) params[2]);
+            } else if (task.equals("getSheets")) {
+
+            } else if (task.equals("getSheet")){
+                QuestionSheet questionSheet = (QuestionSheet) params[1];
+                Log.d("SASH", "try to retrieve: "+questionSheet.getName());
+                wandaJsonWriter.writeGetSheetRequest(questionSheet.getID());
+            }
+
             jsonStringStream.flush();
+            s = myHttpClient.executeHttpPost(serverAddress+task, jsonStringStream.toString());
 
-            s = myHttpClient.executeHttpPost("https://10.0.2.2:8443/wanda.backend/login", jsonStringStream.toString());
-            //s = myHttpClient.executeHttpPost("https://192.168.0.63:8443/wanda.backend/login", metaData.getUsername());
-            //s = myHttpClient.executeHttpPost("https://192.168.0.63:8443/wanda.backend/login", "lala");
-
-
-
-            // Simulate network access.
-            //Thread.sleep(2000);
         } catch (InterruptedException e) {
             return s;
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-//            for (String credential : DUMMY_CREDENTIALS) {
-//                String[] pieces = credential.split(":");
-//                if (pieces[0].equals(usernameStr)) {
-//                    // Account exists, return true if the password matches.
-//                    return pieces[1].equals(passwordStr);
-//                }
-//            }
-
-        // TODO: register the new account here.
         return s;
     }
 
 
 
     @Override
-    protected void onPostExecute(String result) {
-//        mAuthTask = null;
-//        showProgress(false);
-//
-//        if (result != null) {
+    protected void onPostExecute(Object result) {
+         WandaJsonReader jsonReader = new WandaJsonReader();
+         if (task=="login") {
+              //do sth
+          } else if (task == "getSheet"){
+             result = jsonReader.parseGetQuestionSheetResponse((String) result);
+          } else if (task == "getSheets"){
+             result = jsonReader.parseGetSheetsResponse((String) result);
+          }
           callback.onTaskComplete(result);
-//        } else {
-//            passwordField.setError(getString(R.string.error_incorrect_password));
-//            passwordField.requestFocus();
-//        }
-
     }
 
     @Override
     protected void onCancelled() {
         callback.onTaskComplete(null);
+    }
+
+
+    private void buildLoginRequest(String username, String password) throws IOException {
+        MetaData metaData = new MetaData(username);
+        wandaJsonWriter.writeMeta(metaData,password);
     }
 }

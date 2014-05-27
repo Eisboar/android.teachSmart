@@ -58,6 +58,15 @@ public class WandaJsonWriter {
             writer.endObject();
         }
 
+        public void writeGetSheetRequest(int id) throws IOException {
+
+            writer.beginObject();
+
+            writer.name("id").value(id);
+
+            writer.endObject();
+        }
+
     /**
      * method to write the metadata object without password
      * @param metaData
