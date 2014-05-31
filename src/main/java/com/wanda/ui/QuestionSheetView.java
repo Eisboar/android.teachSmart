@@ -20,6 +20,9 @@ import com.wanda.R;
 
 import com.wanda.data.Question;
 import com.wanda.data.QuestionSheet;
+import com.wanda.data.QuestionType;
+
+import static com.wanda.data.QuestionType.*;
 
 public class QuestionSheetView extends ActionBarActivity {
 
@@ -115,7 +118,15 @@ public class QuestionSheetView extends ActionBarActivity {
             // Return a PlaceholderFragment (defined as a static inner class below).
             Bundle bundle = new Bundle();
             bundle.putSerializable("question", questionSheet.getQuestion(position));
-            QuestionView questionView = new RatingQuestionView();
+            QuestionView questionView = null;
+            switch (questionSheet.getQuestion(position).getType()) {
+                case RATING:
+                    questionView = new RatingQuestionView();
+                    break;
+                case MULTIPLE_CHOICE:
+                    questionView = new MultipleChoiceQuestionView();
+                    break;
+            }
             questionView.setArguments(bundle);
             return questionView;
         }

@@ -24,20 +24,18 @@ public class RatingQuestionView extends QuestionView {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Bundle bundle = getArguments();
-        question = (Question) bundle.getSerializable("question");
+        intiQuestion();
 
+        View view = inflater.inflate(R.layout.rating_question_view_layout, container, false);
+        setQuestion(view);
 
-        View rootView = inflater.inflate(R.layout.rating_question_view_layout, container, false);
-        TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-        textView.setText(question.getQuestionText());
-
-        RatingBar ratingBar = (RatingBar) rootView.findViewById(R.id.ratingBar);
+        //init ratingBar
+        RatingBar ratingBar = (RatingBar) view.findViewById(R.id.ratingBar);
         ratingBar.setStepSize((float) 1.0);
-        LayerDrawable starsForground = (LayerDrawable) ratingBar.getProgressDrawable();
         LayerDrawable starsBackground = (LayerDrawable) ratingBar.getProgressDrawable();
         starsBackground.getDrawable(2).setColorFilter(Color.parseColor("#E4DFA0"), PorterDuff.Mode.SRC_ATOP);
         starsBackground.getDrawable(0).setColorFilter(Color.parseColor("#7C6542"), PorterDuff.Mode.SRC_ATOP);
-        return rootView;
+
+        return view;
     }
 }

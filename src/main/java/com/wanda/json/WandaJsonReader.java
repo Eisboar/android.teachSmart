@@ -2,9 +2,12 @@ package com.wanda.json;
 
 import android.util.Log;
 
+import com.wanda.data.MultipleChoiceQuestion;
 import com.wanda.data.Question;
+import com.wanda.data.QuestionAnswer;
 import com.wanda.data.QuestionCreator;
 import com.wanda.data.QuestionSheet;
+import com.wanda.data.QuestionType;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -70,6 +73,18 @@ public Vector<QuestionSheet> parseGetSheetsResponse(String jsonInputString){
 
                 question.setPos(Integer.valueOf(questionJsonObject.getString("position")));
                 question.setQuestionText(questionJsonObject.getString("questionText"));
+                if (question.getType()== QuestionType.MULTIPLE_CHOICE){
+                    JSONArray answersArray = questionJsonObject.getJSONArray("answers");
+                    Vector<QuestionAnswer> answers = new Vector<QuestionAnswer>();
+                    for (int j = 0; j < answersArray.length(); j++) {
+                        JSONObject answerJsonObject = answersArray.getJSONObject(j);
+                        QuestionAnswer answer = new QuestionAnswer();
+                        answer.setPosition(Integer.valueOf(answerJsonObject.getString("position")));
+                        answer.setAnswerText(answerJsonObject.getString("answerText"));
+                        answers.addElement(answer);
+                    }
+                    ((MultipleChoiceQuestion) question).setAnswers(answers);
+                }
                 questions.addElement(question);
             }
             questionSheet.setQuestions(questions);

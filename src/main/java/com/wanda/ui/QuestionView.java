@@ -21,17 +21,18 @@ public abstract class QuestionView extends Fragment {
      */
     protected Question question;
 
-    /**
-     * Returns a new instance of this fragment for the given section
-     * number.
-     */
-    public QuestionView(Question question) {
-        //QuestionView fragment = new QuestionView();
-        this.question=question;
+    public QuestionView() {
     }
 
-    public QuestionView() {
+    protected void intiQuestion(){
+        Bundle bundle = getArguments();
+        question = (Question) bundle.getSerializable("question");
+    }
 
+    protected void setQuestion(View view){
+        TextView textView = (TextView) view.findViewById(R.id.questionTextView);
+        textView.setText(question.getQuestionText());
+        TextView headline = (TextView) view.findViewById(R.id.textView);
     }
 
 

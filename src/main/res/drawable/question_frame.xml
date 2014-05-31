@@ -2,4 +2,5 @@
     <solid android:color="@color/light_green"
         android:layout_width="wrap_content" />
     <stroke android:width="2dip" android:color="@color/dark_brown"/>
+
 </shape>
