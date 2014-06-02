@@ -10,11 +10,6 @@
         <activity
             android:name="com.wanda.ui.LoginActivity"
             android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name="com.wanda.ui.QuestionSheetView"
@@ -23,6 +18,11 @@
         <activity
             android:name=".ui.SheetsView"
             android:label="@string/title_activity_question_sheets_view" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
     </application>
 

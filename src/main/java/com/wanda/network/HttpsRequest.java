@@ -18,7 +18,7 @@ import java.io.StringWriter;
  */
 public class HttpsRequest extends AsyncTask<Object, String, Object > {
 
-    private String serverAddress = "https://10.0.2.2:8443/wanda.backend/";
+    private String serverAddress = "https://192.168.0.7:8443/wanda.backend/";
 
     private CallbackListenerInterface<Object> callback;
 
