@@ -16,7 +16,7 @@
             android:label="@string/title_activity_question_sheet" >
         </activity>
         <activity
-            android:name=".ui.SheetsView"
+            android:name="com.wanda.ui.SheetsView"
             android:label="@string/title_activity_question_sheets_view" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,0 +1,57 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:background="#A6B05C"
+    android:id="@+id/Layout">
+
+<LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="433dp"
+        android:layout_gravity="center_horizontal|top"
+    android:id="@+id/linearLayout"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentStart="true"
+    android:layout_below="@+id/textView">
+
+</LinearLayout>
+
+    <TextView
+        android:layout_width="146dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textStyle="bold"
+        android:text="Résumé:"
+        android:id="@+id/textView"
+        android:paddingBottom="20dp"
+        android:textColor="@color/dark_brown"
+        android:autoText="false"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:paddingTop="20dp"
+        android:background="@drawable/answer_frame"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"></TextView>
+
+    <Button
+        android:layout_width="110dp"
+        android:layout_height="wrap_content"
+        android:text="abgeben"
+        android:id="@+id/button"
+        android:layout_gravity="right"
+        android:textColor="@color/light_green"
+        android:clickable="true"
+        android:enabled="true"
+        android:background="@drawable/abegeben_button"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="41dp" />
+
+
+</RelativeLayout>

@@ -51,16 +51,17 @@
         android:layout_alignParentStart="true"
         android:textColor="@color/dark_brown" />
 
-    <Button
+    <ImageButton
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Button"
+        android:src="@drawable/pencil_icon_32x32"
         android:id="@+id/button"
-        android:layout_alignTop="@+id/textView"
-        android:layout_alignRight="@+id/textView"
-        android:layout_alignEnd="@+id/textView"
-        android:longClickable="true" />
+        android:longClickable="true"
+        android:background="@drawable/abegeben_button"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 
 </RelativeLayout>

@@ -1,6 +1,9 @@
 package com.wanda.ui;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Vector;
 
 import android.support.v7.app.ActionBarActivity;
@@ -18,13 +21,20 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.wanda.R;
 
+import com.wanda.data.Answer;
+import com.wanda.data.MultipleChoiceAnswer;
 import com.wanda.data.Question;
 import com.wanda.data.QuestionSheet;
 import com.wanda.data.QuestionType;
+import com.wanda.data.RatingAnswer;
+import com.wanda.network.CallbackListenerInterface;
+import com.wanda.network.HttpsRequest;
 
 import static com.wanda.data.QuestionType.*;
 
-public class QuestionSheetView extends ActionBarActivity {
+public class QuestionSheetView extends ActionBarActivity
+implements ResumeView.OnResumeViewShowedListener, QuestionView.OnAnswerChangedListener,
+        ResumeView.OnSendButtonClickedListener, CallbackListenerInterface<Object> {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -36,10 +46,14 @@ public class QuestionSheetView extends ActionBarActivity {
      */
     QuestionSheetPagerAdapter questionSheetPagerAdapter;
 
+    QuestionSheet questionSheet = null;
+
     /**
      * The {@link ViewPager} that will host the section contents.
      */
     ViewPager mViewPager;
+    Map<Integer, Answer> answers;
+
 
 //    private QuestionSheet createDummyData(){
 //        Log.i("SASH", "creating Dummy-data");
@@ -56,7 +70,7 @@ public class QuestionSheetView extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         Bundle bundle = getIntent().getExtras();
-        QuestionSheet questionSheet = (QuestionSheet) bundle.getSerializable("questionSheet");
+        questionSheet = (QuestionSheet) bundle.getSerializable("questionSheet");
 
         //QuestionSheet questionSheet = createDummyData();
 
@@ -74,6 +88,8 @@ public class QuestionSheetView extends ActionBarActivity {
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(questionSheetPagerAdapter);
 
+        setTitle(questionSheet.getName());
+        answers = new HashMap<Integer, Answer>();
     }
 
 
@@ -97,7 +113,78 @@ public class QuestionSheetView extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    
+    @Override
+    public void getCurrentAnswers(ResumeView resumeview) {
+        //Log.d("SASH","got signal from resumeview");
+
+        //build the resume String (ex: 4/5 questions answered)
+        //get total number of Questions
+        int totalQuestionCount = questionSheet.getQuestionCount();
+        //get number of answered qeustions
+        int answeredQuestionCount =0;
+        Iterator it = answers.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pairs = (Map.Entry)it.next();
+            Answer answer = (Answer) pairs.getValue();
+            if (answer.getType()==MULTIPLE_CHOICE)
+                if (((MultipleChoiceAnswer) answer).getSelectedAnswer()==-1)
+                    continue;
+            answeredQuestionCount++;
+        }
+        //build String
+        String resultString = String.valueOf(answeredQuestionCount) +
+                "/" + String.valueOf(totalQuestionCount) +
+                " Fragen beantwortet";
+
+        resumeview.updateView(resultString);
+    }
+
+    @Override
+    public void setCurrentAnswer(Bundle bundle) {
+        Answer answer = null;
+        String questionType = bundle.getString("questionType");
+        if (questionType.equals("multiple_choice")){
+            answer = new MultipleChoiceAnswer();
+            ((MultipleChoiceAnswer) answer).setSelectedAnswer(bundle.getInt("answerPos"));
+        } else if (questionType.equals("rating")){
+            answer = new RatingAnswer();
+            ((RatingAnswer) answer).setRating(bundle.getInt("rating"));
+        }
+        //answer.setAnswerText();
+        int questionPos = bundle.getInt("questionPos");
+        if (answers.containsKey(questionPos)){
+            answers.remove(questionPos);
+        }
+        answers.put(questionPos,answer);
+    }
+
+    @Override
+    public void sendAnswers() {
+        deleteEmptyAnswers();
+        HttpsRequest httpsRequest = new HttpsRequest(this);
+        httpsRequest.execute("addAnswers", questionSheet.getID(), answers);
+    }
+
+    private void deleteEmptyAnswers() {
+        Vector<Integer> vec = new Vector<Integer>();
+        Iterator it = answers.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pairs = (Map.Entry)it.next();
+            Answer answer = (Answer) pairs.getValue();
+            if (answer.getType()==MULTIPLE_CHOICE)
+                if (((MultipleChoiceAnswer) answer).getSelectedAnswer()==-1)
+                    vec.add((Integer) pairs.getKey());
+        }
+        for (Integer i: vec){
+            answers.remove(i);
+        }
+    }
+
+    @Override
+    public void onTaskComplete(Object result) {
+
+    }
+
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
@@ -114,10 +201,15 @@ public class QuestionSheetView extends ActionBarActivity {
 
         @Override
         public Fragment getItem(int position) {
+            //Log.d("SASH","item request "+ String.valueOf(position));
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
+            if (position == questionSheet.getQuestionCount()){
+                return new ResumeView();
+            }
             Bundle bundle = new Bundle();
             bundle.putSerializable("question", questionSheet.getQuestion(position));
+            bundle.putInt("questionCount", questionSheet.getQuestionCount());
             QuestionView questionView = null;
             switch (questionSheet.getQuestion(position).getType()) {
                 case RATING:
@@ -133,9 +225,11 @@ public class QuestionSheetView extends ActionBarActivity {
 
         @Override
         public int getCount() {
-            //Log.i("SASH", "get count");
+
+            //Log.d("SASH", "get count " + String.valueOf(questionSheet.getQuestionCount()));
             // Show 3 total pages.
-            return questionSheet.getQuestionCount();
+
+            return questionSheet.getQuestionCount()+1;
         }
 
         @Override

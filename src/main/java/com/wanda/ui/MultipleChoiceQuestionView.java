@@ -1,6 +1,7 @@
 package com.wanda.ui;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +37,10 @@ public class MultipleChoiceQuestionView extends QuestionView {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        if (savedInstanceState != null && savedInstanceState.containsKey("lastChecked")){
+            lastChanged = savedInstanceState.getInt("lastChecked");
+        }
+
         intiQuestion();
 
         View view = inflater.inflate(R.layout.multiple_choice_question_view_layout, container, false);
@@ -66,6 +71,7 @@ public class MultipleChoiceQuestionView extends QuestionView {
             {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
                 {
+
                     if ( isChecked )
                     {
                         //ask if more than 1 is checked?
@@ -76,7 +82,8 @@ public class MultipleChoiceQuestionView extends QuestionView {
                             CheckBox checkBox = ((CheckBox)pairs.getValue());
                             if (checkBox.isChecked()) count++;
                         }
-
+                        if (count==0)
+                            lastChanged=-1;
                         if (count==2)
                             checkBoxes.get(lastChanged).setChecked(false);
 
@@ -88,9 +95,12 @@ public class MultipleChoiceQuestionView extends QuestionView {
                                 lastChanged = ((Integer)pairs.getKey());
                             }
                         }
-                    }
 
+                    }else {
+                        lastChanged = -1;
                     }
+                    reportAnswer();
+                }
 
 
 
@@ -99,7 +109,32 @@ public class MultipleChoiceQuestionView extends QuestionView {
             checkBoxes.put(answer.getPosition(), cb);
 
         }
+        if (lastChanged != -1){
+            checkBoxes.get(lastChanged).setChecked(true);
+        }
 
+
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("lastChecked", lastChanged);
+    }
+
+    private void reportAnswer(){
+        Bundle bundle = new Bundle();
+        bundle.putString("questionType", "multiple_choice");
+        bundle.putInt("questionPos",question.getPos());
+        bundle.putInt("answerPos",lastChanged);
+        //Log.d("SASH", String.valueOf(lastChanged));
+        try {
+            mCallback = (OnAnswerChangedListener) activity;
+            mCallback.setCurrentAnswer(bundle);
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement Listener");
+        }
     }
 
 }

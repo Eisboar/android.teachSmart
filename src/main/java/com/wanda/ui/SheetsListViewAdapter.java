@@ -1,6 +1,7 @@
 package com.wanda.ui;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,7 +48,14 @@ public class SheetsListViewAdapter extends ArrayAdapter<QuestionSheet> {
 
         //Fill them with the appropriate data from the question sheet
         sheetNameTextView.setText(questionSheet.getName());
+        sheetNameTextView.setTextColor(parent.getResources().getColor(R.color.dark_brown));
+        //sheetNameTextView.setTextColor(R.color.dark_brown);
+        sheetNameTextView.setTextSize(18.00f);
+        sheetNameTextView.setTypeface(null, Typeface.BOLD);
+
         sheetTimestampTextView.setText(questionSheet.getCreate_date().toString());
+       // sheetTimestampTextView.setTextColor(R.color.dark_brown);
+        sheetTimestampTextView.setTextColor(parent.getResources().getColor(R.color.brown));
 
         return sheetInfoView;
     }
